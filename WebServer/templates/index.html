@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>图像识别</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        /* 侧边栏样式 */
+        .sidebar {
+            height: 100%;
+            width: 160px;
+            position: fixed;
+            z-index: 1;
+            top: 0;
+            left: 0;
+            background-color: #111;
+            overflow-x: hidden;
+            padding-top: 20px;
+        }
+
+        /* 侧边栏链接样式 */
+        .sidebar a {
+            padding: 6px 8px 6px 16px;
+            text-decoration: none;
+            font-size: 20px;
+            color: #818181;
+            display: block;
+        }
+
+        /* 鼠标悬浮在侧边栏链接上的样式 */
+        .sidebar a:hover {
+            color: #f1f1f1;
+        }
+
+        /* 主体部分样式 */
+        .main {
+            margin-left: 160px; /* 与侧边栏宽度相同 */
+            padding: 0px 10px;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f2f2f2;
+        }
+
+        h1 {
+            text-align: center;
+            margin-top: 50px;
+            margin-bottom: 30px;
+        }
+
+        h2 {
+            margin-top: 0px;
+            margin-bottom: 10px;
+            color: rgb(12, 12, 12);
+            font-family: 宋体, SimSun;
+            font-size: 20px;
+        }
+
+        form {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 30px;
+        }
+
+        #image-upload {
+            display: none;
+        }
+
+        label {
+            display: block;
+            width: 150px;
+            height: 50px;
+            margin-right: 10px;
+            border-radius: 5px;
+            background-color: #6d7e8b;
+            color: #fff;
+            font-size: 20px;
+            font-weight: bold;
+            line-height: 50px;
+            text-align: center;
+            cursor: pointer;
+        }
+
+        label:hover {
+            background-color: #535f6b;
+        }
+
+        #image-preview {
+            display: none;
+            margin: 0 auto;
+            max-width: 80%;
+            max-height: 400px;
+            object-fit: contain;
+            border: 10px solid #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+        }
+
+        #result {
+            display: none;
+            margin: 0 auto;
+            margin-top: 20px;
+            font-size: 24px;
+            font-weight: bold;
+            text-align: center;
+        }
+
+
+        button[type="submit"] {
+            background-color: #007ffd;
+            color: #fff;
+            border: none;
+            width: 150px;
+            border-radius: 5px;
+            padding: 10px 20px;
+            color: #fff;
+            font-size: 20px;
+            font-weight: bold;
+            text-align: center;
+            cursor: pointer;
+        }
+
+        button[type="submit"]:hover {
+            background-color: #005bb9;
+        }
+
+        .instructions {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            background-color: white;
+
+            font-family: SimSun;
+            font-size: 14px;
+            line-height: 1.5;
+            background-color: transparent;
+        }
+    </style>
+
+</head>
+<body>
+<!-- 侧边栏 -->
+<div class="sidebar">
+    <a href="http://127.0.0.1:5000">图像识别</a>
+    <a href="http://127.0.0.1:5000/query">识别记录</a>
+</div>
+
+<!-- 主体部分 -->
+<div class="main">
+    <h1>在线图片识别系统</h1>
+    <form id="image-form">
+        <label for="image-upload">1. 上传图像</label>
+        <input type="file" id="image-upload" accept="image/*">
+        <button type="submit">2. 分析图片</button>
+    </form>
+    <img id="image-preview">
+    <p id="result"></p>
+    <script>
+        const form = document.getElementById('image-form');
+        const input = document.getElementById('image-upload');
+        const preview = document.getElementById('image-preview');
+        const result = document.getElementById('result');
+
+        input.addEventListener('change', () => {
+            preview.style.display = 'block';
+            result.style.display = 'none';
+
+            const file = input.files[0];
+            const reader = new FileReader();
+
+            reader.addEventListener('load', () => {
+                preview.src = reader.result;
+            });
+
+            if (file) {
+                reader.readAsDataURL(file);
+            }
+        });
+
+        form.addEventListener('submit', (event) => {
+            event.preventDefault();
+            result.textContent = '识别中，请稍候...';
+            result.style.display = 'block';
+
+            const file = input.files[0];
+            const formData = new FormData();
+            formData.append('image', file);
+
+            fetch('/analyze-image', {
+                method: 'POST',
+                body: formData
+            })
+                    .then(response => response.json())
+                    .then(data => {
+                        result.textContent = `这张图片是：${data.result}`;
+                    })
+                    .catch(error => {
+                        console.error(error);
+                        result.textContent = '识别出错，请重试';
+                    });
+        });
+    </script>
+
+    <div class="instructions">
+        <h2>使用说明:</h2>
+        <h2>1. 点击"上传图片"上传所需识别的图片</h2>
+        <h2>2. 点击"分析图片"返回图片识别的结果</h2>
+    </div>
+</div>
+</body>

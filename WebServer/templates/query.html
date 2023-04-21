@@ -1,0 +1,41 @@
+<table>
+    <thead>
+      <tr>
+        <th>文件名</th>
+        <!-- <th>上传时间</th> -->
+        <th>识别结果</th>
+        <th>操作</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for log in logs %}
+      <tr>
+        <td>{{ log.filename }}</td>
+        <!-- <td>{{ log.timestamp }}</td> -->
+        <td>{{ log.results }}</td>
+        <td>
+          <button class="btn btn-danger" onclick="deleteLog('{{ log.filename }}')">删除</button>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  <script>
+  function deleteLog(filename) {
+    if (confirm(`确定要删除日志 ${filename} 吗？`)) {
+      fetch(`/logs/${filename}`, {
+        method: 'DELETE'
+      })
+      .then(response => response.json())
+      .then(data => {
+        alert(data.message);
+        location.reload();
+      })
+      .catch(error => {
+        console.error(error);
+        alert(`删除日志 ${filename} 失败`);
+      });
+    }
+  }
+  </script>
+  

@@ -1,0 +1,7 @@
+# 忽略编辑器配置目录
+/.idea
+/.vscode
+
+# 忽略上传缓存图片
+WebServer/uploads/*
+ImageRecognitionServer/uploads/*

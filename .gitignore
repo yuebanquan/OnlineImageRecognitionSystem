@@ -1,4 +1,5 @@
 # 忽略编辑器配置目录
+/__pycache__
 /.idea
 /.vscode
 

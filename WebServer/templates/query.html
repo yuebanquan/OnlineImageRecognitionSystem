@@ -1,41 +1,139 @@
-<table>
-    <thead>
-      <tr>
-        <th>文件名</th>
-        <!-- <th>上传时间</th> -->
-        <th>识别结果</th>
-        <th>操作</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for log in logs %}
-      <tr>
-        <td>{{ log.filename }}</td>
-        <!-- <td>{{ log.timestamp }}</td> -->
-        <td>{{ log.results }}</td>
-        <td>
-          <button class="btn btn-danger" onclick="deleteLog('{{ log.filename }}')">删除</button>
-        </td>
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
-  <script>
-  function deleteLog(filename) {
-    if (confirm(`确定要删除日志 ${filename} 吗？`)) {
-      fetch(`/logs/${filename}`, {
-        method: 'DELETE'
-      })
-      .then(response => response.json())
-      .then(data => {
-        alert(data.message);
-        location.reload();
-      })
-      .catch(error => {
-        console.error(error);
-        alert(`删除日志 ${filename} 失败`);
-      });
+<style>
+    /* 侧边栏样式 */
+    .sidebar {
+        height: 100%;
+        width: 160px;
+        position: fixed;
+        z-index: 1;
+        top: 0;
+        left: 0;
+        background-color: #222329;
+        overflow-x: hidden;
+        padding-top: 20px;
     }
-  }
-  </script>
-  
+
+    /* 侧边栏链接样式 */
+    .sidebar a {
+        padding: 6px 8px 6px 16px;
+        text-decoration: none;
+        font-size: 20px;
+        color: #d0d0d0;
+        display: block;
+    }
+
+    /* 鼠标悬浮在侧边栏链接上的样式 */
+    .sidebar a:hover {
+        color: #fefefe;
+    }
+
+
+    /* 侧边栏连接所在位置样式 */
+    .sidebar a[href$="query"] {
+        background-color: rgba(109, 126, 139, 0.58);
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    th,
+    td {
+        text-align: center;
+        padding: 8px;
+    }
+
+    th {
+        background-color: #f2f2f2;
+    }
+
+    tr:nth-child(even) {
+        background-color: #f2f2f2;
+    }
+
+    .btn {
+        padding: 8px 16px;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+
+    .btn-delete {
+        background-color: #dc3545;
+        color: white;
+        border: none;
+    }
+
+    .btn-delete:hover {
+        background-color: #c82333;
+    }
+
+    .btn-view {
+        background-color: #007bff;
+        color: white;
+        border: none;
+    }
+
+    .btn-view:hover {
+        background-color: #0069d9;
+    }
+</style>
+
+<body>
+<!-- 侧边栏 -->
+<div class="sidebar">
+    <a href="http://127.0.0.1:5000/index">图像识别</a>
+    <a href="http://127.0.0.1:5000/query">识别记录</a>
+</div>
+
+<div style="margin-left: 160px;">
+    <table>
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>图像文件名</th>
+            <th>识别结果</th>
+            <th>识别时间</th>
+            <th>操作</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for log in logs %}
+        <tr>
+            <td>{{ log.id }}</td>
+            <td>{{ log.fileName }}</td>
+            <td>{{ log.result }}</td>
+            <td>{{ log.date }}</td>
+            <td>
+                <button class="btn btn-view" onclick="viewImage('{{ log.fileName }}')">查看图像</button>
+                <button class="btn btn-delete" onclick="deleteLog('{{ log.id }}')">删除</button>
+            </td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+
+<script>
+    function deleteLog(id) {
+        if (confirm(`确定要删除ID为 ${id} 的日志吗？`)) {
+            fetch(`/query/${id}`, {
+                method: 'DELETE'
+            })
+                    .then(response => response.json())
+                    .then(data => {
+                        alert(data.message);
+                        location.reload();
+                    })
+                    .catch(error => {
+                        console.error(error);
+                        alert(`删除ID为 ${id} 的日志失败`);
+                    });
+        }
+    }
+
+    function viewImage(fileName) {
+        window.open(`./uploads/${fileName}`);
+    }
+</script>
+</body>

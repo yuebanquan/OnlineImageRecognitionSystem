@@ -13,7 +13,7 @@
             z-index: 1;
             top: 0;
             left: 0;
-            background-color: #111;
+            background-color: #222329;
             overflow-x: hidden;
             padding-top: 20px;
         }
@@ -23,13 +23,18 @@
             padding: 6px 8px 6px 16px;
             text-decoration: none;
             font-size: 20px;
-            color: #818181;
+            color: #d0d0d0;
             display: block;
         }
 
         /* 鼠标悬浮在侧边栏链接上的样式 */
         .sidebar a:hover {
-            color: #f1f1f1;
+            color: #fefefe;
+        }
+
+        /* 侧边栏连接所在位置样式 */
+        .sidebar a[href$="index"] {
+            background-color: rgba(109, 126, 139, 0.58);
         }
 
         /* 主体部分样式 */
@@ -141,7 +146,7 @@
 <body>
 <!-- 侧边栏 -->
 <div class="sidebar">
-    <a href="http://127.0.0.1:5000">图像识别</a>
+    <a href="http://127.0.0.1:5000/index">图像识别</a>
     <a href="http://127.0.0.1:5000/query">识别记录</a>
 </div>
 
@@ -186,7 +191,7 @@
             const formData = new FormData();
             formData.append('image', file);
 
-            fetch('/analyze-image', {
+            fetch('/analyze_image', {
                 method: 'POST',
                 body: formData
             })

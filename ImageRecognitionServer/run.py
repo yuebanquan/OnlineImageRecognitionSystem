@@ -6,7 +6,7 @@ import cv2
 
 app = Flask(__name__)
 
-# 加载 YOLOv7 模型
+# 加载 YOLOv5 模型
 model = torch.hub.load('ultralytics/yolov5', 'yolov5m', pretrained=True)
 
 # 加载模型类别名称列表
@@ -22,7 +22,7 @@ def analyze_file():
     # 将图片转为 RGB 格式
     img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
 
-    # 使用 YOLOv7 模型进行目标检测
+    # 使用 YOLOv5 模型进行目标检测
     results = model(img)
 
     # 解析结果
